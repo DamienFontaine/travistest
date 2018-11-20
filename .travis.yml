@@ -1,8 +1,16 @@
 language: go
 go:
   - "1.11"
-services:
-  - mongodb
+env:
+  global:
+    - MONGODB_VERSION=3.4.18
+install:
+  - wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-$MONGODB_VERSION.tgz
+  - tar xfz mongodb-linux-x86_64-$MONGODB_VERSION.tgz
+  - export PATH=`pwd`/mongodb-linux-x86_64-$MONGODB_VERSION/bin:$PATH
+  - mkdir -p data/db
+  - mongod --dbpath=data/db &
+  - sleep
 before_script:
   - mongorestore -h 127.0.0.1 --port 27017 -d data integration
   - mongo data --eval "printjson(db.getCollectionNames())"
