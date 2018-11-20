@@ -6,9 +6,16 @@ env:
 matrix:
   include:
     - env: $MONGO_SETTINGS=--auth
+      before_script:
+        - mongo data --eval 'db.createUser({user:"travis",pwd:"test",roles:["readWrite"]});'
+        - mongorestore -h 127.0.0.1 --port 27017 --username travis --password test -d data integration
+        - mongo data --username travis --password test --eval "db.getCollection('data').find({})"
       script:
         - go test ./... -tags=authentication
     - env: $MONGO_SETTINGS=
+      before_script:
+        - mongorestore -h 127.0.0.1 --port 27017 -d data integration
+        - mongo data --eval "db.getCollection('data').find({})"
       script:
         - go test ./...
 install:
@@ -18,6 +25,3 @@ install:
   - mkdir -p data/db
   - mongod --dbpath=data/db $MONGO_SETTINGS &
   - sleep 3
-before_script:
-  - mongorestore -h 127.0.0.1 --port 27017 -d data integration
-  - mongo data --eval "db.getCollection('data').find({})"
