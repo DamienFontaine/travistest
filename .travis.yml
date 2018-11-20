@@ -9,7 +9,7 @@ matrix:
       before_script:
         - mongorestore -h 127.0.0.1 --port 27017 -d data integration
         - mongo admin --eval 'db.createUser({user:"travis", pwd:"test", roles:[{ role:"readWrite", db:"data"}]});'
-        - mongod --shutdown
+        - mongod --dbpath=data/db --shutdown
         - sleep 10
         - mongod --dbpath=data/db $MONGO_SETTINGS  &
         - sleep 3
