@@ -10,7 +10,7 @@ install:
   - export PATH=`pwd`/mongodb-linux-x86_64-$MONGODB_VERSION/bin:$PATH
   - mkdir -p data/db
   - mongod --dbpath=data/db &
-  - sleep
+  - sleep 3
 before_script:
   - mongorestore -h 127.0.0.1 --port 27017 -d data integration
   - mongo data --eval "printjson(db.getCollectionNames())"
