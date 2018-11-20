@@ -1,3 +1,5 @@
+// +build authentication
+
 // Copyright (c) - Damien Fontaine <damien.fontaine@lineolia.net>
 //
 // This program is free software: you can redistribute it and/or modify
@@ -15,8 +17,9 @@
 
 package main
 
-import "fmt"
+import (
+	"testing"
+)
 
-func main() {
-	fmt.Println("Hello, world.")
+func TestMainAuthNormal(t *testing.T) {
 }
