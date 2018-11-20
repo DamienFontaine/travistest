@@ -6,3 +6,4 @@ services:
 before_script:
   - mongorestore -h 127.0.0.1 --port 27017 -d data integration
   - mongo data --eval "printjson(db.getCollectionNames())"
+  - mongo data --eval "printjson(db.data.find())"
