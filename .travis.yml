@@ -5,14 +5,18 @@ env:
   - MONGODB_VERSION=3.4.18
 matrix:
   include:
-    - env: $MONGO_SETTINGS=--auth
+    - env: MONGO_SETTINGS=--auth
       before_script:
-        - mongo data --eval 'db.createUser({user:"travis",pwd:"test",roles:["readWrite"]});'
-        - mongorestore -h 127.0.0.1 --port 27017 --username travis --password test -d data integration
+        - mongorestore -h 127.0.0.1 --port 27017 -d data integration
+        - mongo admin --eval 'db.createUser({user:"travis", pwd:"test", roles:[{ role:"readWrite", db:"data"}]});'
+        - mongod --shutdown
+        - sleep 10
+        - mongod --dbpath=data/db $MONGO_SETTINGS  &
+        - sleep 3
         - mongo data --username travis --password test --eval "db.getCollection('data').find({})"
       script:
         - go test ./... -tags=authentication
-    - env: $MONGO_SETTINGS=
+    - env: MONGO_SETTINGS=
       before_script:
         - mongorestore -h 127.0.0.1 --port 27017 -d data integration
         - mongo data --eval "db.getCollection('data').find({})"
@@ -23,5 +27,5 @@ install:
   - tar xfz mongodb-linux-x86_64-$MONGODB_VERSION.tgz
   - export PATH=`pwd`/mongodb-linux-x86_64-$MONGODB_VERSION/bin:$PATH
   - mkdir -p data/db
-  - mongod --dbpath=data/db $MONGO_SETTINGS &
+  - mongod --dbpath=data/db &
   - sleep 3
