@@ -3,8 +3,6 @@ go:
   - "1.10.x"
   - "1.11.x"
 env:
-  global:
-    - MONGODB_VERSION=3.4.18
   matrix:
     - MONGO_SETTINGS=--auth
     - MONGO_SETTINGS=
@@ -28,9 +26,9 @@ matrix:
       script:
         - go test ./...
 install:
-  - wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-$MONGODB_VERSION.tgz
-  - tar xfz mongodb-linux-x86_64-$MONGODB_VERSION.tgz
-  - export PATH=`pwd`/mongodb-linux-x86_64-$MONGODB_VERSION/bin:$PATH
+  - wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.4.18.tgz
+  - tar xfz mongodb-linux-x86_64-3.4.18.tgz
+  - export PATH=`pwd`/mongodb-linux-x86_64-3.4.18/bin:$PATH
   - mkdir -p data/db
   - mongod --dbpath=data/db &
   - sleep 3
