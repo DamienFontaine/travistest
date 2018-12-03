@@ -27,8 +27,8 @@ before_script:
         mongo data --eval "db.getCollection('data').find({})";
     fi
 script:
-  - if [ ${MONGO_SETTINGS} = "--auth" ]; then
-        go test ./... -tags=authentication
+  - if [[] ${MONGO_SETTINGS} = "--auth" ]]; then
+        go test ./... -tags=authentication;
     else
-        go test ./...
+        go test ./...;
     fi
