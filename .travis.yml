@@ -14,12 +14,12 @@ install:
   - mongod --dbpath=data/db &
   - sleep 3
 before_script:
-  - if [ ${MONGO_SETTINGS} = "--auth" ]; then
+  - if [[ ${MONGO_SETTINGS} = "--auth" ]]; then
         mongorestore -h 127.0.0.1 --port 27017 -d data integration;
         mongo data --eval 'db.createUser({user:"travis", pwd:"test", roles:["readWrite"]})';
         mongod --dbpath=data/db --shutdown;
         sleep 10;
-        mongod --dbpath=data/db $MONGO_SETTINGS  &;
+        mongod --dbpath=data/db --fork --logpath /var/log/mongodb.log "$MONGO_SETTINGS";
         sleep 3;
         mongo data --username travis --password test --eval "db.getCollection('data').find({})";
     else
