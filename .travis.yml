@@ -11,7 +11,7 @@ install:
   - tar xfz mongodb-linux-x86_64-3.4.18.tgz
   - export PATH=`pwd`/mongodb-linux-x86_64-3.4.18/bin:$PATH
   - mkdir -p data/db
-  - mongod --dbpath=data/db &
+  - mongod --dbpath=data/db --fork --logpath mongodb.log
   - sleep 3
 before_script:
   - if [[ ${MONGO_SETTINGS} = "--auth" ]]; then
@@ -27,7 +27,7 @@ before_script:
         mongo data --eval "db.getCollection('data').find({})";
     fi
 script:
-  - if [[] ${MONGO_SETTINGS} = "--auth" ]]; then
+  - if [[ ${MONGO_SETTINGS} = "--auth" ]]; then
         go test ./... -tags=authentication;
     else
         go test ./...;
