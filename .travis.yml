@@ -6,6 +6,8 @@ env:
   matrix:
     - MONGO_SETTINGS=--auth
     - MONGO_SETTINGS=
+  global:
+    - GO_MOD=
 install:
   - wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.4.18.tgz
   - tar xfz mongodb-linux-x86_64-3.4.18.tgz
@@ -14,6 +16,8 @@ install:
   - mongod --dbpath=data/db --fork --logpath mongodb.log
   - sleep 3
 before_script:
+  - if [[ ${TRAVIS_GO_VERSION} =~ ^1\.11 ]]; then export GO_MOD="-mod=vendor";fi
+  - echo $GO_MOD
   - if [[ ${MONGO_SETTINGS} = "--auth" ]]; then
         mongorestore -h 127.0.0.1 --port 27017 -d data integration;
         mongo data --eval 'db.createUser({user:"travis", pwd:"test", roles:["readWrite"]})';
