@@ -6,25 +6,6 @@ env:
   matrix:
     - MONGO_SETTINGS=--auth
     - MONGO_SETTINGS=
-matrix:
-  include:
-    - env: MONGO_SETTINGS=--auth
-      before_script:
-        - mongorestore -h 127.0.0.1 --port 27017 -d data integration
-        - mongo data --eval 'db.createUser({user:"travis", pwd:"test", roles:["readWrite"]});'
-        - mongod --dbpath=data/db --shutdown
-        - sleep 10
-        - mongod --dbpath=data/db $MONGO_SETTINGS  &
-        - sleep 3
-        - mongo data --username travis --password test --eval "db.getCollection('data').find({})"
-      script:
-        - go test ./... -tags=authentication
-    - env: MONGO_SETTINGS=
-      before_script:
-        - mongorestore -h 127.0.0.1 --port 27017 -d data integration
-        - mongo data --eval "db.getCollection('data').find({})"
-      script:
-        - go test ./...
 install:
   - wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.4.18.tgz
   - tar xfz mongodb-linux-x86_64-3.4.18.tgz
@@ -32,3 +13,22 @@ install:
   - mkdir -p data/db
   - mongod --dbpath=data/db &
   - sleep 3
+before_script:
+  - if [ "$MONGO_SETTINGS" == "--auth" ]; then
+    mongorestore -h 127.0.0.1 --port 27017 -d data integration;
+    mongo data --eval 'db.createUser({user:"travis", pwd:"test", roles:["readWrite"]});';
+    mongod --dbpath=data/db --shutdown;
+    sleep 10;
+    mongod --dbpath=data/db $MONGO_SETTINGS  &;
+    sleep 3;
+    mongo data --username travis --password test --eval "db.getCollection('data').find({})";
+    else
+    mongorestore -h 127.0.0.1 --port 27017 -d data integration;
+    mongo data --eval "db.getCollection('data').find({})";
+    fi
+script:
+  - if [ "$MONGO_SETTINGS" == "--auth" ]; then
+    go test ./... -tags=authentication
+    else
+    go test ./...
+    fi
