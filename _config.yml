@@ -1,1 +1,12 @@
+github: [metadata]
+title: Test Travis
+email: damien.fontaine@lineolia.net
+description: >-
+  Test
+baseurl: ""
+url: ""
+twitter_username: damienFontaine
+github_username:  damienFontaine
+
+markdown: kramdown
 theme: jekyll-theme-slate
